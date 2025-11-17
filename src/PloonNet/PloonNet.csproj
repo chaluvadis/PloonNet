@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <!-- Package Information -->
+    <PackageId>PloonNet</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>PloonNet Contributors</Authors>
+    <Company>PloonNet</Company>
+    <Description>DotNet driver for PLOON (Path-Level Object Oriented Notation). Achieves 49% token reduction vs JSON and 14% better than TOON through dual path notation (depth:index for arrays, depth for objects) and single schema declaration, optimized for deeply nested structures.</Description>
+    <PackageTags>ploon;serialization;json;optimization;llm;token-reduction;data-format</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/chaluvadis/PloonNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/chaluvadis/PloonNet</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
