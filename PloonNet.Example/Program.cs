@@ -1,4 +1,4 @@
-﻿using PloonNet;
+using PloonNet;
 using System.Text.Json;
 Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
 
@@ -18,7 +18,7 @@ var ploon0 = Ploon.Stringify(product, new StringifyOptions { Format = PloonForma
 Console.WriteLine($"""
         JSON:  {json0}
         PLOON: {ploon0}
-        Reduction: {((json0.Length - ploon0.Length) * 100.0 / json0.Length):F1}% \n
+        Reduction: {(json0.Length - ploon0.Length) * 100.0 / json0.Length:F1}% \n
 """);
 
 
@@ -40,7 +40,7 @@ var ploon1 = Ploon.Stringify(products, new StringifyOptions { Format = PloonForm
 Console.WriteLine($"""
         JSON:  {json1}
         PLOON: {ploon1}
-        Reduction: {((json1.Length - ploon1.Length) * 100.0 / json1.Length):F1}%
+        Reduction: {(json1.Length - ploon1.Length) * 100.0 / json1.Length:F1}%
 """);
 
 // Example 2: Nested Objects
@@ -92,6 +92,57 @@ Console.WriteLine($"""
         Dataset: 5 employees with 4 fields each
         JSON size:  {jsonLarge.Length} characters
         PLOON size: {ploonLarge.Length} characters
-        Reduction:  {((jsonLarge.Length - ploonLarge.Length) * 100.0 / jsonLarge.Length):F1}%
+        Reduction:  {(jsonLarge.Length - ploonLarge.Length) * 100.0 / jsonLarge.Length:F1}%
         Savings:    {jsonLarge.Length - ploonLarge.Length} characters
     """);
+
+// DANGEROUS: Modifying global config affects all future operations
+Console.WriteLine("=== Dangerous Approach ===");
+var badConfig = PloonConfig.Standard;
+badConfig.FieldDelimiter = ";"; // This modifies the global Standard config!
+badConfig.RecordSeparator = "|";
+
+var badConfigResults = Ploon.Stringify(products, new StringifyOptions { Config = badConfig });
+Console.WriteLine("First operation: " + badConfigResults.Replace("\n", "\\n"));
+
+var modifiedConfigResults = Ploon.Stringify(products); // Uses modified Standard config!
+Console.WriteLine("Second operation (unexpected): " + modifiedConfigResults.Replace("\n", "\\n"));
+
+// SAFE: Using Clone() prevents side effects
+Console.WriteLine("\n=== Safe Approach with Clone() ===");
+
+// Reset the global config (in real code, you'd restart the app)
+PloonConfig.Standard.FieldDelimiter = "|";
+PloonConfig.Standard.RecordSeparator = "\n";
+
+var customConfig = PloonConfig.Standard.Clone();
+customConfig.FieldDelimiter = ";"; // Only affects the cloned instance
+customConfig.RecordSeparator = "|";
+
+var customConfigResults = Ploon.Stringify(products, new StringifyOptions { Config = customConfig });
+Console.WriteLine("Custom config: " + customConfigResults.Replace("\n", "\\n").Replace("|", "\\|"));
+
+var standardConfigResults = Ploon.Stringify(products); // Still uses original Standard config
+Console.WriteLine("Standard config (unchanged): " + standardConfigResults.Replace("\n", "\\n"));
+
+// Advanced: Creating multiple custom configs
+Console.WriteLine("\n=== Multiple Custom Configurations ===");
+
+var csvConfig = PloonConfig.Standard.Clone();
+csvConfig.FieldDelimiter = ",";
+csvConfig.RecordSeparator = "\n";
+
+var tsvConfig = PloonConfig.Standard.Clone();
+tsvConfig.FieldDelimiter = "\t";
+tsvConfig.RecordSeparator = "\n";
+
+var jsonLikeConfig = PloonConfig.Standard.Clone();
+jsonLikeConfig.FieldDelimiter = "\":\"";
+jsonLikeConfig.RecordSeparator = ",\"";
+jsonLikeConfig.SchemaOpen = "{\"";
+jsonLikeConfig.SchemaClose = "\":{";
+jsonLikeConfig.FieldsOpen = "\"";
+jsonLikeConfig.FieldsClose = "\"}";
+
+Console.WriteLine("CSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = csvConfig }).Replace("\n", "\\n"));
+Console.WriteLine("TSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = tsvConfig }).Replace("\n", "\\n").Replace("\t", "\\t"));
