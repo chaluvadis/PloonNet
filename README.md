@@ -116,6 +116,38 @@ Validate PLOON format string.
 bool valid = Ploon.IsValid(ploonString);
 ```
 
+#### `Parse(string, options?)`
+
+Convert PLOON string back to .NET object.
+
+```csharp
+var ploon = "[users#2](id,name)\n\n1:1|1|Alice\n1:2|2|Bob";
+var obj = Ploon.Parse(ploon);
+
+// With strict mode (default: enabled)
+var obj = Ploon.Parse(ploon, new ParseOptions { Strict = true });
+
+// Strict mode validates:
+// - Path notation format
+// - Schema consistency (field count validation for arrays)
+```
+
+#### `ParseAsync(string, options?)`
+
+Asynchronously convert PLOON string back to .NET object.
+
+```csharp
+var obj = await Ploon.ParseAsync(ploonString);
+```
+
+#### `StringifyAsync(object, options?)`
+
+Asynchronously convert object to PLOON format.
+
+```csharp
+var ploon = await Ploon.StringifyAsync(data);
+```
+
 #### `FromJson(string, options?)`
 
 Convert JSON string directly to PLOON.
