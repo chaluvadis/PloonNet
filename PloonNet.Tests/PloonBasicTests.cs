@@ -270,6 +270,39 @@ public class PloonBasicTests
     }
 
     [Fact]
+    public void Debug_NestedObject_Parsing()
+    {
+        // Arrange
+        var original = new
+        {
+            orders = new[]
+            {
+                new
+                {
+                    id = 101,
+                    customer = new
+                    {
+                        name = "Alice",
+                        address = new
+                        {
+                            city = "NYC",
+                            zip = "10001"
+                        }
+                    }
+                }
+            }
+        };
+
+        // Act
+        var ploon = Ploon.Stringify(original);
+        Console.WriteLine($"Generated PLOON: {ploon}");
+
+        // Assert - should not throw
+        var parsed = Ploon.Parse(ploon);
+        Assert.NotNull(parsed);
+    }
+
+    [Fact]
     public void Parse_EmptyString_ThrowsArgumentException()
     {
         // Act & Assert

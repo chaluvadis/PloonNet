@@ -118,8 +118,8 @@ public static class Ploon
 
         ct.ThrowIfCancellationRequested();
 
-        // Use async JSON serialization for better performance with large objects
-        var jsonElement = await SerializeToElementAsync(obj).ConfigureAwait(false);
+        // Use synchronous JSON serialization to avoid JsonDocument disposal issues
+        var jsonElement = JsonSerializer.SerializeToElement(obj);
 
         // Yield control for large datasets to improve responsiveness
         await Task.Yield();
@@ -206,7 +206,8 @@ public static class Ploon
 
         // Use JsonSerializer to produce bytes then parse asynchronously from a stream
         var jsonString = JsonSerializer.Serialize(obj, options);
-        using var document = await JsonDocument.ParseAsync(new MemoryStream(Encoding.UTF8.GetBytes(jsonString))).ConfigureAwait(false);
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonString));
+        using var document = await JsonDocument.ParseAsync(stream).ConfigureAwait(false);
         return document.RootElement;
     }
 

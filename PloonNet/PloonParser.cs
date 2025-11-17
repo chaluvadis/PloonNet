@@ -470,18 +470,22 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             {
                 // Group records by array index
                 var recordsByIndex = arrayRecords.GroupBy(r => GetArrayIndex(r.Path))
-                                                 .ToDictionary(g => g.Key, g => g.ToList());
+                                                  .ToDictionary(g => g.Key, g => g.ToList());
 
                 // Check that all array items have the same number of primitive fields at root level
                 var expectedFieldCount = schema.Fields.Count(f => f.Type == FieldType.Primitive);
+                Console.WriteLine($"DEBUG: NestedObjectOpen: '{_config.NestedObjectOpen}'; Schema fields: {string.Join(", ", schema.Fields.Select(f => $"{f.Name}({f.Type})"))}; Expected: {expectedFieldCount}");
                 foreach (var kvp in recordsByIndex)
                 {
                     var itemRecords = kvp.Value;
+                    Console.WriteLine($"DEBUG: Item {kvp.Key} records: {string.Join("; ", itemRecords.Select(r => $"{r.Path}: {string.Join("|", r.Values)}"))}");
                     var mainRecord = itemRecords.FirstOrDefault(r => GetPathDepth(r.Path) == 1);
+                    Console.WriteLine($"DEBUG: Main record for item {kvp.Key}: {mainRecord?.Path}: {string.Join("|", mainRecord?.Values ?? [])}");
                     if (mainRecord != null && mainRecord.Values.Count != expectedFieldCount)
                     {
+                        var debugInfo = $"Schema fields: {string.Join(", ", schema.Fields.Select(f => $"{f.Name}({f.Type})"))}; Expected: {expectedFieldCount}; Records: {string.Join("; ", itemRecords.Select(r => $"{r.Path}: {string.Join("|", r.Values)}"))}; Main: {mainRecord.Path}: {string.Join("|", mainRecord.Values)}";
                         throw new FormatException(
-                            $"Schema consistency violation: Array item at index {kvp.Key} has {mainRecord.Values.Count} fields, expected {expectedFieldCount}");
+                            $"Schema consistency violation: Array item at index {kvp.Key} has {mainRecord.Values.Count} fields, expected {expectedFieldCount}. Debug: {debugInfo}");
                     }
                 }
             }

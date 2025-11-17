@@ -25,14 +25,14 @@ public class TokenReductionTests
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
         // Assert - PLOON should be significantly smaller
-        Assert.True(ploon.Length < json.Length, 
+        Assert.True(ploon.Length < json.Length,
             $"PLOON ({ploon.Length} chars) should be smaller than JSON ({json.Length} chars)");
-        
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
         Console.WriteLine($"JSON size: {json.Length} characters");
         Console.WriteLine($"PLOON size: {ploon.Length} characters");
         Console.WriteLine($"Reduction: {reduction:F1}%");
-        
+
         // PLOON should achieve at least 40% reduction for repetitive data
         Assert.True(reduction > 40, $"Expected >40% reduction, got {reduction:F1}%");
     }
@@ -74,12 +74,12 @@ public class TokenReductionTests
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
         // Assert
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
         Console.WriteLine($"\nNested Structure:");
         Console.WriteLine($"JSON size: {json.Length} characters");
         Console.WriteLine($"PLOON size: {ploon.Length} characters");
         Console.WriteLine($"Reduction: {reduction:F1}%");
-        
+
         Assert.True(reduction > 30, $"Expected >30% reduction for nested data, got {reduction:F1}%");
     }
 
@@ -149,12 +149,12 @@ public class TokenReductionTests
         var idCount = CountOccurrences(result, "\"id\"");
         var nameCount = CountOccurrences(result, "\"name\"");
         var emailCount = CountOccurrences(result, "\"email\"");
-        
+
         // In PLOON, field names appear only in schema, not in data
         Assert.Equal(0, idCount); // No quotes around field names in PLOON
         Assert.Equal(0, nameCount);
         Assert.Equal(0, emailCount);
-        
+
         // But schema should define them once
         Assert.Contains("(id,name,email)", result);
     }

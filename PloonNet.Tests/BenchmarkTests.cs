@@ -6,14 +6,9 @@ namespace PloonNet.Tests;
 /// <summary>
 /// Benchmark tests to verify PLOON's token reduction claims
 /// </summary>
-public class BenchmarkTests
+public class BenchmarkTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public BenchmarkTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+    private readonly ITestOutputHelper _output = output;
 
     [Fact]
     public void Benchmark_SmallDataset_5Items()
@@ -33,7 +28,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Small Dataset (5 items) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -63,7 +58,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Medium Dataset (20 items) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -94,7 +89,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Large Dataset (100 items) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -153,7 +148,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Deeply Nested Structure ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -204,7 +199,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Wide Structure (Many Fields) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -238,7 +233,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Target Reduction Verification (50 items, 7 fields) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
@@ -271,7 +266,7 @@ public class BenchmarkTests
         var json = JsonSerializer.Serialize(data);
         var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
 
-        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+        var reduction = (double)(json.Length - ploon.Length) / json.Length * 100;
 
         _output.WriteLine("=== Large Dataset (100 items) ===");
         _output.WriteLine($"JSON:      {json.Length} chars");
