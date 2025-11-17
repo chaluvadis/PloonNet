@@ -1,4 +1,4 @@
-namespace PloonNet;
+namespace Ploon.Net;
 
 /// <summary>
 /// Builds PLOON schema from .NET objects

@@ -1,4 +1,4 @@
-namespace PloonNet;
+namespace Ploon.Net;
 
 /// <summary>
 /// Options for PLOON stringify operation

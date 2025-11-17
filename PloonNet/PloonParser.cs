@@ -1,4 +1,4 @@
-namespace PloonNet;
+namespace Ploon.Net;
 
 /// <summary>
 /// Parses PLOON format back to .NET objects

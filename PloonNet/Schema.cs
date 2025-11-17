@@ -1,4 +1,4 @@
-namespace PloonNet;
+namespace Ploon.Net;
 
 /// <summary>
 /// Type of a schema field

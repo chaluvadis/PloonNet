@@ -1,4 +1,4 @@
-namespace PloonNet;
+namespace Ploon.Net;
 
 /// <summary>
 /// Configuration for PLOON serialization and deserialization
