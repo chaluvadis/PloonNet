@@ -1,7 +1,7 @@
-using PloonNet;
 using System.Text.Json;
-Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
+using PloonNet;
 
+Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
 // Example 0: No Array
 Console.WriteLine("Example 0: No Array");
 
@@ -120,7 +120,8 @@ customConfig.FieldDelimiter = ";"; // Only affects the cloned instance
 customConfig.RecordSeparator = "|";
 
 var customConfigResults = Ploon.Stringify(products, new StringifyOptions { Config = customConfig });
-Console.WriteLine("Custom config: " + customConfigResults.Replace("\n", "\\n").Replace("|", "\\|"));
+var customConfigDisplay = customConfigResults.Replace("\n", "\\n").Replace("|", "\\|");
+Console.WriteLine("Custom config: " + customConfigDisplay);
 
 var standardConfigResults = Ploon.Stringify(products); // Still uses original Standard config
 Console.WriteLine("Standard config (unchanged): " + standardConfigResults.Replace("\n", "\\n"));
@@ -145,4 +146,6 @@ jsonLikeConfig.FieldsOpen = "\"";
 jsonLikeConfig.FieldsClose = "\"}";
 
 Console.WriteLine("CSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = csvConfig }).Replace("\n", "\\n"));
-Console.WriteLine("TSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = tsvConfig }).Replace("\n", "\\n").Replace("\t", "\\t"));
+var tsvResult = Ploon.Stringify(products, new StringifyOptions { Config = tsvConfig });
+var tsvDisplay = tsvResult.Replace("\n", "\\n").Replace("\t", "\\t");
+Console.WriteLine("TSV-style: " + tsvDisplay);
