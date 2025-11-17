@@ -3,16 +3,10 @@ namespace PloonNet;
 /// <summary>
 /// Encodes data into PLOON format
 /// </summary>
-internal class DataEncoder
+internal class DataEncoder(PloonConfig config, SchemaNode schema)
 {
-    private readonly PloonConfig _config;
-    private readonly SchemaNode _schema;
-
-    public DataEncoder(PloonConfig config, SchemaNode schema)
-    {
-        _config = config;
-        _schema = schema;
-    }
+    private readonly PloonConfig _config = config;
+    private readonly SchemaNode _schema = schema;
 
     /// <summary>
     /// Encode JSON element to PLOON data records
@@ -64,7 +58,7 @@ internal class DataEncoder
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
 
-        if (primitiveFields.Any())
+        if (primitiveFields.Count != 0)
         {
             var values = new List<string>();
             var path = $"{depth}{_config.PathSeparator}{index}";
@@ -81,7 +75,7 @@ internal class DataEncoder
                 }
             }
 
-            if (values.Any())
+            if (values.Count != 0)
             {
                 records.Add(path + _config.FieldDelimiter + string.Join(_config.FieldDelimiter, values));
             }
@@ -113,7 +107,7 @@ internal class DataEncoder
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
 
-        if (primitiveFields.Any())
+        if (primitiveFields.Count != 0)
         {
             var values = new List<string>();
             var path = $"{depth} "; // Object path: depth + space
@@ -130,7 +124,7 @@ internal class DataEncoder
                 }
             }
 
-            if (values.Any())
+            if (values.Count != 0)
             {
                 records.Add(path + _config.FieldDelimiter + string.Join(_config.FieldDelimiter, values));
             }
@@ -162,7 +156,7 @@ internal class DataEncoder
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
 
-        if (primitiveFields.Any())
+        if (primitiveFields.Count != 0)
         {
             var values = new List<string>();
             var path = $"{depth} "; // Object path
@@ -175,7 +169,7 @@ internal class DataEncoder
                 }
             }
 
-            if (values.Any())
+            if (values.Count != 0)
             {
                 records.Add(path + _config.FieldDelimiter + string.Join(_config.FieldDelimiter, values));
             }
@@ -202,18 +196,15 @@ internal class DataEncoder
     /// <summary>
     /// Format a value for output
     /// </summary>
-    private string FormatValue(JsonElement value)
+    private string FormatValue(JsonElement value) => value.ValueKind switch
     {
-        return value.ValueKind switch
-        {
-            JsonValueKind.String => EscapeValue(value.GetString() ?? string.Empty),
-            JsonValueKind.Number => value.GetRawText(),
-            JsonValueKind.True => "true",
-            JsonValueKind.False => "false",
-            JsonValueKind.Null => string.Empty,
-            _ => string.Empty
-        };
-    }
+        JsonValueKind.String => EscapeValue(value.GetString() ?? string.Empty),
+        JsonValueKind.Number => value.GetRawText(),
+        JsonValueKind.True => "true",
+        JsonValueKind.False => "false",
+        JsonValueKind.Null => string.Empty,
+        _ => string.Empty
+    };
 
     /// <summary>
     /// Escape special characters in values
