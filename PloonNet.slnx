@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="PloonNet/PloonNet.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="PloonNet.Example/PloonNet.Example.csproj" Id="21241c8b-1049-4285-83b7-5dbe179d115e" />
+  <Project Path="PloonNet.Tests/PloonNet.Tests.csproj" />
+</Solution>

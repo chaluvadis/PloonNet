@@ -1,4 +1,4 @@
-# 🚀 PloonNet
+# PloonNet
 
 **DotNet driver for PLOON (Path-Level Object Oriented Notation)**
 
@@ -8,7 +8,7 @@ PloonNet achieves **49% token reduction vs JSON** and **14% better than TOON** t
 
 ---
 
-## 📊 Why PLOON?
+## Why PLOON?
 
 When sending data to LLMs, every token counts. PLOON optimizes hierarchical data by:
 
@@ -26,7 +26,7 @@ When sending data to LLMs, every token counts. PLOON optimizes hierarchical data
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 # Add to your .NET project
@@ -42,7 +42,7 @@ Or add to your `.csproj`:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```csharp
 using PloonNet;
@@ -76,7 +76,7 @@ Console.WriteLine(compact);
 
 ---
 
-## 📖 API Reference
+## API Reference
 
 ### Core Functions
 
@@ -116,6 +116,38 @@ Validate PLOON format string.
 bool valid = Ploon.IsValid(ploonString);
 ```
 
+#### `Parse(string, options?)`
+
+Convert PLOON string back to .NET object.
+
+```csharp
+var ploon = "[users#2](id,name)\n\n1:1|1|Alice\n1:2|2|Bob";
+var obj = Ploon.Parse(ploon);
+
+// With strict mode (default: enabled)
+var obj = Ploon.Parse(ploon, new ParseOptions { Strict = true });
+
+// Strict mode validates:
+// - Path notation format
+// - Schema consistency (field count validation for arrays)
+```
+
+#### `ParseAsync(string, options?)`
+
+Asynchronously convert PLOON string back to .NET object.
+
+```csharp
+var obj = await Ploon.ParseAsync(ploonString);
+```
+
+#### `StringifyAsync(object, options?)`
+
+Asynchronously convert object to PLOON format.
+
+```csharp
+var ploon = await Ploon.StringifyAsync(data);
+```
+
 #### `FromJson(string, options?)`
 
 Convert JSON string directly to PLOON.
@@ -127,7 +159,7 @@ var ploon = Ploon.FromJson(json);
 
 ---
 
-## 📐 Understanding Path Notation
+## Understanding Path Notation
 
 PLOON uses **dual path notation** to distinguish between arrays and objects:
 
@@ -174,7 +206,7 @@ Used for object elements without an index:
 
 ---
 
-## 📋 Format Examples
+## Format Examples
 
 ### Simple Array
 
@@ -265,7 +297,7 @@ var data = new
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 Customize PLOON format with `PloonConfig`:
 
@@ -290,7 +322,7 @@ var ploon = Ploon.Stringify(data, options);
 
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
 ### 1. Optimize LLM Prompts
 
@@ -316,7 +348,7 @@ var ploon = Ploon.Stringify(nested);
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Run the test suite:
 
@@ -333,7 +365,7 @@ dotnet run
 
 ---
 
-## 🤝 Credits
+## Credits
 
 Inspired by [TOON Format](https://github.com/toon-format/toon). PLOON offers an alternative approach using path-based hierarchy instead of indentation, achieving comparable token efficiency with different trade-offs.
 
@@ -341,7 +373,7 @@ Reference implementation: [ploon-js](https://github.com/ulpi-io/ploon-js)
 
 ---
 
-## 📄 License
+## License
 
 MIT © PloonNet Contributors
 
