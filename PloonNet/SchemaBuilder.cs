@@ -3,11 +3,9 @@ namespace PloonNet;
 /// <summary>
 /// Builds PLOON schema from .NET objects
 /// </summary>
-internal class SchemaBuilder
+internal class SchemaBuilder(PloonConfig config)
 {
-    private readonly PloonConfig _config;
-
-    public SchemaBuilder(PloonConfig config) => _config = config;
+    private readonly PloonConfig _config = config;
 
     /// <summary>
     /// Build schema from a JSON element
@@ -183,7 +181,7 @@ internal class SchemaBuilder
             {
                 case FieldType.Array:
                     fieldStr += _config.ArraySizeMarker;
-                    if (field.Fields != null && field.Fields.Any())
+                    if (field.Fields != null && field.Fields.Count != 0)
                     {
                         fieldStr += _config.FieldsOpen;
                         fieldStr += GenerateFieldsString(field.Fields);
@@ -192,7 +190,7 @@ internal class SchemaBuilder
                     break;
 
                 case FieldType.Object:
-                    if (field.Fields != null && field.Fields.Any())
+                    if (field.Fields != null && field.Fields.Count != 0)
                     {
                         fieldStr += _config.NestedObjectOpen;
                         fieldStr += GenerateFieldsString(field.Fields);
