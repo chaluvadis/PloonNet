@@ -84,22 +84,19 @@ public class PloonConfig
     /// <summary>
     /// Clone this configuration
     /// </summary>
-    public PloonConfig Clone()
+    public PloonConfig Clone() => new()
     {
-        return new PloonConfig
-        {
-            FieldDelimiter = FieldDelimiter,
-            PathSeparator = PathSeparator,
-            ArraySizeMarker = ArraySizeMarker,
-            RecordSeparator = RecordSeparator,
-            EscapeChar = EscapeChar,
-            SchemaOpen = SchemaOpen,
-            SchemaClose = SchemaClose,
-            FieldsOpen = FieldsOpen,
-            FieldsClose = FieldsClose,
-            NestedObjectOpen = NestedObjectOpen,
-            NestedObjectClose = NestedObjectClose,
-            SchemaFieldSeparator = SchemaFieldSeparator
-        };
-    }
+        FieldDelimiter = FieldDelimiter,
+        PathSeparator = PathSeparator,
+        ArraySizeMarker = ArraySizeMarker,
+        RecordSeparator = RecordSeparator,
+        EscapeChar = EscapeChar,
+        SchemaOpen = SchemaOpen,
+        SchemaClose = SchemaClose,
+        FieldsOpen = FieldsOpen,
+        FieldsClose = FieldsClose,
+        NestedObjectOpen = NestedObjectOpen,
+        NestedObjectClose = NestedObjectClose,
+        SchemaFieldSeparator = SchemaFieldSeparator
+    };
 }
