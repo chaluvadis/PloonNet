@@ -1,8 +1,8 @@
-# PloonNet
+# Ploon.Net
 
 **DotNet driver for PLOON (Path-Level Object Oriented Notation)**
 
-PloonNet achieves **49% token reduction vs JSON** and **14% better than TOON** through dual path notation (depth:index for arrays, depth for objects) and single schema declaration, optimized for deeply nested structures with full nested object support.
+Ploon.Net is a .NET implementation of PLOON (Path-Level Object Oriented Notation), a highly efficient serialization format designed to minimize token usage when transmitting data to Large Language Models (LLMs) and for general data interchange.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -30,13 +30,13 @@ When sending data to LLMs, every token counts. PLOON optimizes hierarchical data
 
 ```bash
 # Add to your .NET project
-dotnet add package PloonNet
+dotnet add package Ploon.Net
 ```
 
 Or add to your `.csproj`:
 ```xml
 <ItemGroup>
-  <PackageReference Include="PloonNet" Version="1.0.0" />
+  <PackageReference Include="Ploon.Net" Version="1.0.0" />
 </ItemGroup>
 ```
 
@@ -45,7 +45,7 @@ Or add to your `.csproj`:
 ## Quick Start
 
 ```csharp
-using PloonNet;
+using Ploon.Net;
 
 // Your data
 var data = new
@@ -66,9 +66,9 @@ Console.WriteLine(ploon);
 // 1:2|2|Pants|49.99
 
 // Minify for production (token-optimized)
-var compact = Ploon.Stringify(data, new StringifyOptions 
-{ 
-    Format = PloonFormat.Compact 
+var compact = Ploon.Stringify(data, new StringifyOptions
+{
+    Format = PloonFormat.Compact
 });
 Console.WriteLine(compact);
 // [products#2](id,name,price);1:1|1|Shirt|29.99;1:2|2|Pants|49.99
@@ -328,9 +328,9 @@ var ploon = Ploon.Stringify(data, options);
 
 ```csharp
 // Convert large dataset for GPT-4
-var ploon = Ploon.Stringify(companyData, new StringifyOptions 
-{ 
-    Format = PloonFormat.Compact 
+var ploon = Ploon.Stringify(companyData, new StringifyOptions
+{
+    Format = PloonFormat.Compact
 });
 
 // Result: 49% fewer tokens = lower costs!
@@ -375,7 +375,7 @@ Reference implementation: [ploon-js](https://github.com/ulpi-io/ploon-js)
 
 ## License
 
-MIT © PloonNet Contributors
+MIT © Ploon.Net Contributors
 
 ---
 
