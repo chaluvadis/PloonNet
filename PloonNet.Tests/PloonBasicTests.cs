@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Xunit;
-
 namespace PloonNet.Tests;
 
 public class PloonBasicTests

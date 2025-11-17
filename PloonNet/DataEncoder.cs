@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-
 namespace PloonNet;
 
 /// <summary>
@@ -69,7 +63,7 @@ internal class DataEncoder
     private void EncodeObjectItem(JsonElement item, List<SchemaField> fields, int depth, int index, List<string> records)
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
-        
+
         if (primitiveFields.Any())
         {
             var values = new List<string>();
@@ -118,7 +112,7 @@ internal class DataEncoder
     private void EncodeNestedObject(JsonElement obj, List<SchemaField> fields, int depth, List<string> records)
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
-        
+
         if (primitiveFields.Any())
         {
             var values = new List<string>();
@@ -167,7 +161,7 @@ internal class DataEncoder
     private void EncodeObject(JsonElement obj, List<SchemaField> fields, int depth, List<string> records)
     {
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
-        
+
         if (primitiveFields.Any())
         {
             var values = new List<string>();

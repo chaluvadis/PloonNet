@@ -1,6 +1,3 @@
-using System;
-using System.Text.Json;
-
 namespace PloonNet;
 
 /// <summary>
@@ -35,12 +32,12 @@ public static class Ploon
         // Combine schema and data
         var result = schemaString;
         result += config.RecordSeparator;
-        
+
         if (options.Format == PloonFormat.Standard)
         {
             result += config.RecordSeparator; // Extra newline for readability
         }
-        
+
         result += string.Join(config.RecordSeparator, records);
 
         return result;
@@ -52,13 +49,8 @@ public static class Ploon
     /// <param name="ploonString">PLOON string in compact format</param>
     /// <returns>PLOON string in standard format</returns>
     public static string Prettify(string ploonString)
-    {
-        if (string.IsNullOrEmpty(ploonString))
-            return ploonString;
+        => string.IsNullOrWhiteSpace(ploonString) ? ploonString : ploonString.Replace(";", "\n");
 
-        // Replace semicolons with newlines
-        return ploonString.Replace(";", "\n");
-    }
 
     /// <summary>
     /// Convert PLOON string to compact format (semicolons)
@@ -66,18 +58,8 @@ public static class Ploon
     /// <param name="ploonString">PLOON string in standard format</param>
     /// <returns>PLOON string in compact format</returns>
     public static string Minify(string ploonString)
-    {
-        if (string.IsNullOrEmpty(ploonString))
-            return ploonString;
+        => string.IsNullOrWhiteSpace(ploonString) ? ploonString : ploonString.Replace("\r\n", ";").Replace("\n", ";").Replace(";;", ";");
 
-        // Replace newlines with semicolons and remove extra whitespace
-        var result = ploonString
-            .Replace("\r\n", ";")
-            .Replace("\n", ";")
-            .Replace(";;", ";");
-
-        return result;
-    }
 
     /// <summary>
     /// Validate PLOON format string

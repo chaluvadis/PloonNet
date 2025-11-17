@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text.Json;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace PloonNet.Tests;
@@ -251,5 +248,36 @@ public class BenchmarkTests
 
         // Should be close to 49% for this type of dataset
         Assert.True(reduction > 45, $"Expected >45% reduction, got {reduction:F1}%");
+    }
+
+    [Fact]
+    public void Benchmark_LargeDataset_1000Items()
+    {
+        var items = new List<object>();
+        for (int i = 1; i <= 1000; i++)
+        {
+            items.Add(new
+            {
+                id = i,
+                name = $"Product{i}",
+                category = i % 5 == 0 ? "Electronics" : "Accessories",
+                price = 10.99 * i,
+                stock = 100 - (i % 50),
+                rating = 4.5
+            });
+        }
+
+        var data = new { products = items.ToArray() };
+        var json = JsonSerializer.Serialize(data);
+        var ploon = Ploon.Stringify(data, new StringifyOptions { Format = PloonFormat.Compact });
+
+        var reduction = ((double)(json.Length - ploon.Length) / json.Length) * 100;
+
+        _output.WriteLine("=== Large Dataset (100 items) ===");
+        _output.WriteLine($"JSON:      {json.Length} chars");
+        _output.WriteLine($"PLOON:     {ploon.Length} chars");
+        _output.WriteLine($"Reduction: {reduction:F1}%");
+
+        Assert.True(reduction > 45);
     }
 }

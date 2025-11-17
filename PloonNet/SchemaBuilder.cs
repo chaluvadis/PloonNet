@@ -1,9 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-
 namespace PloonNet;
 
 /// <summary>
@@ -13,10 +7,7 @@ internal class SchemaBuilder
 {
     private readonly PloonConfig _config;
 
-    public SchemaBuilder(PloonConfig config)
-    {
-        _config = config;
-    }
+    public SchemaBuilder(PloonConfig config) => _config = config;
 
     /// <summary>
     /// Build schema from a JSON element
@@ -135,7 +126,18 @@ internal class SchemaBuilder
                 field.Type = FieldType.Object;
                 field.Fields = AnalyzeObject(value);
                 break;
-
+            case JsonValueKind.Undefined:
+                break;
+            case JsonValueKind.String:
+                break;
+            case JsonValueKind.Number:
+                break;
+            case JsonValueKind.True:
+                break;
+            case JsonValueKind.False:
+                break;
+            case JsonValueKind.Null:
+                break;
             default:
                 field.Type = FieldType.Primitive;
                 break;
@@ -150,14 +152,14 @@ internal class SchemaBuilder
     public string GenerateSchemaString(SchemaNode schema)
     {
         var result = _config.SchemaOpen;
-        
+
         result += schema.RootName;
-        
+
         if (schema.Count.HasValue)
         {
             result += _config.ArraySizeMarker + schema.Count.Value;
         }
-        
+
         result += _config.SchemaClose;
         result += _config.FieldsOpen;
         result += GenerateFieldsString(schema.Fields);
