@@ -191,7 +191,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
         var path = recordString[..firstDelimiterIndex].Trim();
         var valuesPart = recordString[(firstDelimiterIndex + _config.FieldDelimiter.Length)..];
 
-        var values = valuesPart.Split(_config.FieldDelimiter)
+        var values = SplitUnescaped(valuesPart, _config.FieldDelimiter[0])
             .Select(v => UnescapeValue(v.Trim()))
             .ToList();
 
@@ -200,6 +200,46 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             Path = path,
             Values = [.. values.Cast<object?>()]
         };
+    }
+
+    /// <summary>
+    /// Split string on delimiter while ignoring escaped delimiters
+    /// </summary>
+    private List<string> SplitUnescaped(string input, char delimiter)
+    {
+        var result = new List<string>();
+        var current = new System.Text.StringBuilder();
+        bool escaped = false;
+
+        foreach (char c in input)
+        {
+            if (escaped)
+            {
+                current.Append(c);
+                escaped = false;
+            }
+            else if (c == _config.EscapeChar[0])
+            {
+                escaped = true;
+                current.Append(c);
+            }
+            else if (c == delimiter)
+            {
+                result.Add(current.ToString());
+                current.Clear();
+            }
+            else
+            {
+                current.Append(c);
+            }
+        }
+
+        if (current.Length > 0)
+        {
+            result.Add(current.ToString());
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -432,8 +472,8 @@ internal class PloonParser(PloonConfig config, bool strict = true)
                 var recordsByIndex = arrayRecords.GroupBy(r => GetArrayIndex(r.Path))
                                                  .ToDictionary(g => g.Key, g => g.ToList());
 
-                // Check that all array items have the same number of fields
-                var expectedFieldCount = schema.Fields.Count;
+                // Check that all array items have the same number of primitive fields at root level
+                var expectedFieldCount = schema.Fields.Count(f => f.Type == FieldType.Primitive);
                 foreach (var kvp in recordsByIndex)
                 {
                     var itemRecords = kvp.Value;
