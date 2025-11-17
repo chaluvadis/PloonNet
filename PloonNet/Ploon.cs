@@ -1,4 +1,4 @@
-namespace Ploon.Net;
+namespace PloonNet;
 
 /// <summary>
 /// Main API for serialization and deserialization

@@ -4,10 +4,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<!-- Package Information -->
-		<PackageId>Ploon.Net</PackageId>
+		<PackageId>PloonNet</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>PloonNet Contributors</Authors>
-		<Company>Ploon.Net</Company>
+		<Company>PloonNet</Company>
 		<Description>.NET driver for Ploon (Path-Level Object Oriented Notation). Achieves 49% token reduction vs JSON and 14% better than TOON through dual path notation (depth:index for arrays, depth for objects) and single schema declaration, optimized for deeply nested structures.</Description>
 		<PackageTags>ploon;serialization;json;optimization;llm;token-reduction;data-format</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -17,8 +17,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<LangVersion>latest</LangVersion>
-		<AssemblyName>Ploon.Net</AssemblyName>
-		<RootNamespace>Ploon.Net</RootNamespace>
-		<Product>Ploon.Net</Product>
+		<AssemblyName>PloonNet</AssemblyName>
+		<RootNamespace>PloonNet</RootNamespace>
+		<Product>PloonNet</Product>
 	</PropertyGroup>
 </Project>
