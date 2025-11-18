@@ -1,8 +1,8 @@
-# Ploon.Net
+# PloonNet
 
 **DotNet driver for PLOON (Path-Level Object Oriented Notation)**
 
-Ploon.Net is a .NET implementation of PLOON (Path-Level Object Oriented Notation), a highly efficient serialization format designed to minimize token usage when transmitting data to Large Language Models (LLMs) and for general data interchange.
+PloonNet is a .NET implementation of PLOON (Path-Level Object Oriented Notation), a highly efficient serialization format designed to minimize token usage when transmitting data to Large Language Models (LLMs) and for general data interchange.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -19,9 +19,9 @@ When sending data to LLMs, every token counts. PLOON optimizes hierarchical data
 
 ### Key Benefits
 
-| Metric | vs JSON | vs TOON |
-|--------|---------|---------|
-| **File Size** | 66.2% ↓ | 36.0% ↓ |
+| Metric          | vs JSON | vs TOON |
+| --------------- | ------- | ------- |
+| **File Size**   | 66.2% ↓ | 36.0% ↓ |
 | **Token Count** | 49.1% ↓ | 14.1% ↓ |
 
 ---
@@ -30,13 +30,14 @@ When sending data to LLMs, every token counts. PLOON optimizes hierarchical data
 
 ```bash
 # Add to your .NET project
-dotnet add package Ploon.Net
+dotnet add package PloonNet
 ```
 
 Or add to your `.csproj`:
+
 ```xml
 <ItemGroup>
-  <PackageReference Include="Ploon.Net" Version="1.0.0" />
+  <PackageReference Include="PloonNet" Version="1.0.0" />
 </ItemGroup>
 ```
 
@@ -45,7 +46,7 @@ Or add to your `.csproj`:
 ## Quick Start
 
 ```csharp
-using Ploon.Net;
+using PloonNet;
 
 // Your data
 var data = new
@@ -165,6 +166,7 @@ var ploon = await Ploon.StringifyAsync(data, new StringifyOptions { Format = Plo
 ```
 
 **Async Benefits:**
+
 - **True async operations**: Not just `Task.Run` wrappers
 - **Cancellation support**: Can cancel long-running operations
 - **Better scalability**: Non-blocking I/O for large datasets
@@ -205,6 +207,7 @@ PLOON uses **dual path notation** to distinguish between arrays and objects:
 ### Array Paths: `depth:index`
 
 Used for array elements with an index component:
+
 - `1:1` - First item at depth 1
 - `1:2` - Second item at depth 1
 - `2:1` - First item at depth 2 (nested in `1:1`)
@@ -213,6 +216,7 @@ Used for array elements with an index component:
 ### Object Paths: `depth ` (depth + space)
 
 Used for object elements without an index:
+
 - `2 ` - Object at depth 2
 - `3 ` - Object at depth 3
 - `4 ` - Object at depth 4
@@ -220,6 +224,7 @@ Used for object elements without an index:
 ### When to Use Each
 
 **Arrays** (`#` in schema): Use `depth:index` format
+
 ```
 [products#2](id,name)    ← Array marker #
 1:1|1|Laptop             ← Array path
@@ -227,6 +232,7 @@ Used for object elements without an index:
 ```
 
 **Objects** (`{}` in schema): Use `depth ` format
+
 ```
 [orders#1](customer{name},id)    ← Object marker {}
 1:1|101                          ← Array path (order)
@@ -234,6 +240,7 @@ Used for object elements without an index:
 ```
 
 **Mixed structures** combine both notations seamlessly:
+
 ```
 [orders#1](customer{email,name},id,items#(name,price))
 
@@ -250,6 +257,7 @@ Used for object elements without an index:
 ### Simple Array
 
 **Input C#:**
+
 ```csharp
 var data = new
 {
@@ -262,6 +270,7 @@ var data = new
 ```
 
 **PLOON Output:**
+
 ```
 [users#2](id,name)
 
@@ -272,6 +281,7 @@ var data = new
 ### Nested Objects
 
 **Input C#:**
+
 ```csharp
 var data = new
 {
@@ -295,6 +305,7 @@ var data = new
 ```
 
 **PLOON Output:**
+
 ```
 [orders#1](id,customer{name,address{city,zip}})
 
@@ -306,6 +317,7 @@ var data = new
 ### Nested Arrays
 
 **Input C#:**
+
 ```csharp
 var data = new
 {
@@ -326,6 +338,7 @@ var data = new
 ```
 
 **PLOON Output:**
+
 ```
 [products#1](id,name,colors#(name,hex))
 
@@ -398,7 +411,7 @@ dotnet test
 Run the demo:
 
 ```bash
-cd examples/PloonDemo
+cd PloonNet.Example
 dotnet run
 ```
 
@@ -414,7 +427,7 @@ Reference implementation: [ploon-js](https://github.com/ulpi-io/ploon-js)
 
 ## License
 
-MIT © Ploon.Net Contributors
+MIT © PloonNet Contributors
 
 ---
 
