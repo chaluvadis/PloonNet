@@ -40,7 +40,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     {
         var fieldsCloseIndex = ploonString.IndexOf(_config.FieldsClose);
         if (fieldsCloseIndex == -1)
-            throw new FormatException("Invalid PLOON format: missing fields closing parenthesis");
+            throw new FormatException("Invalid Ploon format: missing fields closing parenthesis");
 
         var schemaEnd = fieldsCloseIndex + _config.FieldsClose.Length;
         var schema = ploonString[..schemaEnd];
@@ -102,7 +102,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     private List<SchemaField> ParseFields(string fieldsString)
     {
         var fields = new List<SchemaField>();
-        var fieldStrings = fieldsString.Split(_config.SchemaFieldSeparator);
+        var fieldStrings = SplitFieldsRespectingNesting(fieldsString);
 
         foreach (var fieldStr in fieldStrings)
         {
@@ -133,7 +133,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             {
                 field.Type = FieldType.Object;
                 var objStart = field.Name.IndexOf(_config.NestedObjectOpen);
-                var objEnd = field.Name.IndexOf(_config.NestedObjectClose);
+                var objEnd = FindMatchingClosingBrace(field.Name, objStart);
 
                 if (objStart != -1 && objEnd != -1 && objEnd > objStart)
                 {
@@ -151,6 +151,76 @@ internal class PloonParser(PloonConfig config, bool strict = true)
         }
 
         return fields;
+    }
+
+    /// <summary>
+    /// Split fields while respecting nested braces
+    /// </summary>
+    private List<string> SplitFieldsRespectingNesting(string fieldsString)
+    {
+        var fields = new List<string>();
+        var current = new StringBuilder();
+        int braceDepth = 0;
+
+        for (int i = 0; i < fieldsString.Length; i++)
+        {
+            char c = fieldsString[i];
+
+            if (c == _config.NestedObjectOpen[0])
+            {
+                braceDepth++;
+                current.Append(c);
+            }
+            else if (c == _config.NestedObjectClose[0])
+            {
+                braceDepth--;
+                current.Append(c);
+            }
+            else if (c == _config.SchemaFieldSeparator[0] && braceDepth == 0)
+            {
+                // Only split on comma when not inside braces
+                if (current.Length > 0)
+                {
+                    fields.Add(current.ToString());
+                    current.Clear();
+                }
+            }
+            else
+            {
+                current.Append(c);
+            }
+        }
+
+        if (current.Length > 0)
+        {
+            fields.Add(current.ToString());
+        }
+
+        return fields;
+    }
+
+    /// <summary>
+    /// Find the matching closing brace for a nested object
+    /// </summary>
+    private int FindMatchingClosingBrace(string fieldName, int openBraceIndex)
+    {
+        int braceCount = 0;
+        for (int i = openBraceIndex; i < fieldName.Length; i++)
+        {
+            if (fieldName[i] == _config.NestedObjectOpen[0])
+            {
+                braceCount++;
+            }
+            else if (fieldName[i] == _config.NestedObjectClose[0])
+            {
+                braceCount--;
+                if (braceCount == 0)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1; // No matching closing brace found
     }
 
     /// <summary>
@@ -208,7 +278,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     private List<string> SplitUnescaped(string input, char delimiter)
     {
         var result = new List<string>();
-        var current = new System.Text.StringBuilder();
+        var current = new StringBuilder();
         bool escaped = false;
 
         foreach (char c in input)
@@ -314,10 +384,10 @@ internal class PloonParser(PloonConfig config, bool strict = true)
         // Handle nested objects
         foreach (var field in fields.Where(f => f.Type == FieldType.Object))
         {
-            var nestedRecords = records.Where(r => IsObjectPath(r.Path, depth + 1)).ToList();
+            var nestedRecords = records.Where(r => PloonParser.IsObjectPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructNestedObject(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructNestedObject(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -327,7 +397,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             var nestedRecords = records.Where(r => IsArrayPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructArray(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructArray(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -341,7 +411,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     {
         var result = new Dictionary<string, object?>();
 
-        var objectRecord = records.FirstOrDefault(r => IsObjectPath(r.Path, depth));
+        var objectRecord = records.FirstOrDefault(r => PloonParser.IsObjectPath(r.Path, depth));
         if (objectRecord == null) return result;
 
         var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
@@ -353,10 +423,10 @@ internal class PloonParser(PloonConfig config, bool strict = true)
         // Handle further nesting
         foreach (var field in fields.Where(f => f.Type == FieldType.Object))
         {
-            var nestedRecords = records.Where(r => IsObjectPath(r.Path, depth + 1)).ToList();
+            var nestedRecords = records.Where(r => PloonParser.IsObjectPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructNestedObject(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructNestedObject(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -365,7 +435,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             var nestedRecords = records.Where(r => IsArrayPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructArray(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructArray(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -379,7 +449,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     {
         var result = new Dictionary<string, object?>();
 
-        var objectRecord = records.FirstOrDefault(r => IsObjectPath(r.Path, depth));
+        var objectRecord = records.FirstOrDefault(r => PloonParser.IsObjectPath(r.Path, depth));
         if (objectRecord != null)
         {
             var primitiveFields = fields.Where(f => f.Type == FieldType.Primitive).ToList();
@@ -392,10 +462,10 @@ internal class PloonParser(PloonConfig config, bool strict = true)
         // Handle nested structures
         foreach (var field in fields.Where(f => f.Type == FieldType.Object))
         {
-            var nestedRecords = records.Where(r => IsObjectPath(r.Path, depth + 1)).ToList();
+            var nestedRecords = records.Where(r => PloonParser.IsObjectPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructNestedObject(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructNestedObject(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -404,7 +474,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
             var nestedRecords = records.Where(r => IsArrayPath(r.Path, depth + 1)).ToList();
             if (nestedRecords.Any())
             {
-                result[field.Name] = ReconstructArray(field.Fields ?? new List<SchemaField>(), nestedRecords, depth + 1);
+                result[field.Name] = ReconstructArray(field.Fields ?? [], nestedRecords, depth + 1);
             }
         }
 
@@ -426,10 +496,7 @@ internal class PloonParser(PloonConfig config, bool strict = true)
     /// <summary>
     /// Check if path is an object path at given depth
     /// </summary>
-    private bool IsObjectPath(string path, int depth)
-    {
-        return path.Trim() == depth.ToString();
-    }
+    private static bool IsObjectPath(string path, int depth) => path.Trim() == depth.ToString();
 
     /// <summary>
     /// Get depth from path
@@ -474,13 +541,10 @@ internal class PloonParser(PloonConfig config, bool strict = true)
 
                 // Check that all array items have the same number of primitive fields at root level
                 var expectedFieldCount = schema.Fields.Count(f => f.Type == FieldType.Primitive);
-                Console.WriteLine($"DEBUG: NestedObjectOpen: '{_config.NestedObjectOpen}'; Schema fields: {string.Join(", ", schema.Fields.Select(f => $"{f.Name}({f.Type})"))}; Expected: {expectedFieldCount}");
                 foreach (var kvp in recordsByIndex)
                 {
                     var itemRecords = kvp.Value;
-                    Console.WriteLine($"DEBUG: Item {kvp.Key} records: {string.Join("; ", itemRecords.Select(r => $"{r.Path}: {string.Join("|", r.Values)}"))}");
                     var mainRecord = itemRecords.FirstOrDefault(r => GetPathDepth(r.Path) == 1);
-                    Console.WriteLine($"DEBUG: Main record for item {kvp.Key}: {mainRecord?.Path}: {string.Join("|", mainRecord?.Values ?? [])}");
                     if (mainRecord != null && mainRecord.Values.Count != expectedFieldCount)
                     {
                         var debugInfo = $"Schema fields: {string.Join(", ", schema.Fields.Select(f => $"{f.Name}({f.Type})"))}; Expected: {expectedFieldCount}; Records: {string.Join("; ", itemRecords.Select(r => $"{r.Path}: {string.Join("|", r.Values)}"))}; Main: {mainRecord.Path}: {string.Join("|", mainRecord.Values)}";
