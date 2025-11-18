@@ -1,5 +1,6 @@
-using System.Text.Json;
 using PloonNet;
+using PloonNet.Example;
+using System.Text.Json;
 
 Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
 // Example 0: No Array
@@ -70,6 +71,17 @@ var ploon2 = Ploon.Stringify(orders);
 Console.WriteLine(ploon2);
 Console.WriteLine("Note: Objects use 'depth ' (with space), arrays use 'depth:index'\n");
 
+// Test parsing
+try
+{
+    var parsed = Ploon.Parse(ploon2);
+    Console.WriteLine("Parse successful");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Parse failed: {ex.Message}");
+}
+
 // Example 3: Token Reduction Analysis
 Console.WriteLine("Example 3: Token Reduction Analysis");
 
@@ -94,6 +106,21 @@ Console.WriteLine($"""
         PLOON size: {ploonLarge.Length} characters
         Reduction:  {(jsonLarge.Length - ploonLarge.Length) * 100.0 / jsonLarge.Length:F1}%
         Savings:    {jsonLarge.Length - ploonLarge.Length} characters
+    """);
+
+// Example 4: Bigger object and 1000 item collection
+Console.WriteLine("Example 4: Bigger object and 10000 item collection");
+var bigObjectDataSet = Generator.Generate(10000);
+
+var jsonBigObject = JsonSerializer.Serialize(bigObjectDataSet);
+var ploonBigDataSet = Ploon.Stringify(bigObjectDataSet, new StringifyOptions { Format = PloonFormat.Compact });
+
+Console.WriteLine($"""
+        Dataset: Bigger object and 10000 item collection
+        JSON size:  {jsonBigObject.Length} characters
+        PLOON size: {ploonBigDataSet.Length} characters
+        Reduction:  {(jsonBigObject.Length - ploonBigDataSet.Length) * 100.0 / jsonBigObject.Length:F1}%
+        Savings:    {jsonBigObject.Length - ploonBigDataSet.Length} characters
     """);
 
 // DANGEROUS: Modifying global config affects all future operations
