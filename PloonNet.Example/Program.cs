@@ -1,7 +1,8 @@
 using PloonNet;
+using PloonNet.Example;
 using System.Text.Json;
-Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
 
+Console.WriteLine("------------------------ PloonNet - Token-Efficient Data Serialization ------------------------");
 // Example 0: No Array
 Console.WriteLine("Example 0: No Array");
 
@@ -70,6 +71,17 @@ var ploon2 = Ploon.Stringify(orders);
 Console.WriteLine(ploon2);
 Console.WriteLine("Note: Objects use 'depth ' (with space), arrays use 'depth:index'\n");
 
+// Test parsing
+try
+{
+    var parsed = Ploon.Parse(ploon2);
+    Console.WriteLine("Parse successful");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Parse failed: {ex.Message}");
+}
+
 // Example 3: Token Reduction Analysis
 Console.WriteLine("Example 3: Token Reduction Analysis");
 
@@ -96,6 +108,21 @@ Console.WriteLine($"""
         Savings:    {jsonLarge.Length - ploonLarge.Length} characters
     """);
 
+// Example 4: Bigger object and 1000 item collection
+Console.WriteLine("Example 4: Bigger object and 10000 item collection");
+var bigObjectDataSet = Generator.Generate(10000);
+
+var jsonBigObject = JsonSerializer.Serialize(bigObjectDataSet);
+var ploonBigDataSet = Ploon.Stringify(bigObjectDataSet, new StringifyOptions { Format = PloonFormat.Compact });
+
+Console.WriteLine($"""
+        Dataset: Bigger object and 10000 item collection
+        JSON size:  {jsonBigObject.Length} characters
+        PLOON size: {ploonBigDataSet.Length} characters
+        Reduction:  {(jsonBigObject.Length - ploonBigDataSet.Length) * 100.0 / jsonBigObject.Length:F1}%
+        Savings:    {jsonBigObject.Length - ploonBigDataSet.Length} characters
+    """);
+
 // DANGEROUS: Modifying global config affects all future operations
 Console.WriteLine("=== Dangerous Approach ===");
 var badConfig = PloonConfig.Standard;
@@ -120,7 +147,8 @@ customConfig.FieldDelimiter = ";"; // Only affects the cloned instance
 customConfig.RecordSeparator = "|";
 
 var customConfigResults = Ploon.Stringify(products, new StringifyOptions { Config = customConfig });
-Console.WriteLine("Custom config: " + customConfigResults.Replace("\n", "\\n").Replace("|", "\\|"));
+var customConfigDisplay = customConfigResults.Replace("\n", "\\n").Replace("|", "\\|");
+Console.WriteLine("Custom config: " + customConfigDisplay);
 
 var standardConfigResults = Ploon.Stringify(products); // Still uses original Standard config
 Console.WriteLine("Standard config (unchanged): " + standardConfigResults.Replace("\n", "\\n"));
@@ -145,4 +173,6 @@ jsonLikeConfig.FieldsOpen = "\"";
 jsonLikeConfig.FieldsClose = "\"}";
 
 Console.WriteLine("CSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = csvConfig }).Replace("\n", "\\n"));
-Console.WriteLine("TSV-style: " + Ploon.Stringify(products, new StringifyOptions { Config = tsvConfig }).Replace("\n", "\\n").Replace("\t", "\\t"));
+var tsvResult = Ploon.Stringify(products, new StringifyOptions { Config = tsvConfig });
+var tsvDisplay = tsvResult.Replace("\n", "\\n").Replace("\t", "\\t");
+Console.WriteLine("TSV-style: " + tsvDisplay);

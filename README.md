@@ -132,21 +132,43 @@ var obj = Ploon.Parse(ploon, new ParseOptions { Strict = true });
 // - Schema consistency (field count validation for arrays)
 ```
 
-#### `ParseAsync(string, options?)`
+#### `ParseAsync(string, options?, cancellationToken?)`
 
-Asynchronously convert PLOON string back to .NET object.
+Asynchronously convert PLOON string back to .NET object with cancellation support.
 
 ```csharp
+// Basic usage
 var obj = await Ploon.ParseAsync(ploonString);
+
+// With cancellation token
+using var cts = new CancellationTokenSource();
+var obj = await Ploon.ParseAsync(ploonString, cancellationToken: cts.Token);
+
+// With options
+var obj = await Ploon.ParseAsync(ploonString, new ParseOptions { Strict = true });
 ```
 
-#### `StringifyAsync(object, options?)`
+#### `StringifyAsync(object, options?, cancellationToken?)`
 
-Asynchronously convert object to PLOON format.
+Asynchronously convert object to PLOON format with cancellation support.
 
 ```csharp
+// Basic usage
 var ploon = await Ploon.StringifyAsync(data);
+
+// With cancellation token
+using var cts = new CancellationTokenSource();
+var ploon = await Ploon.StringifyAsync(data, cancellationToken: cts.Token);
+
+// With options
+var ploon = await Ploon.StringifyAsync(data, new StringifyOptions { Format = PloonFormat.Compact });
 ```
+
+**Async Benefits:**
+- **True async operations**: Not just `Task.Run` wrappers
+- **Cancellation support**: Can cancel long-running operations
+- **Better scalability**: Non-blocking I/O for large datasets
+- **Responsiveness**: Yields control during processing
 
 #### `FromJson(string, options?)`
 
@@ -155,6 +177,23 @@ Convert JSON string directly to PLOON.
 ```csharp
 var json = @"{""users"":[{""id"":1,""name"":""Alice""}]}";
 var ploon = Ploon.FromJson(json);
+```
+
+#### `FromJsonAsync(string, options?, cancellationToken?)`
+
+Convert JSON string to PLOON asynchronously with cancellation support.
+
+```csharp
+// Basic usage
+var json = @"{""users"":[{""id"":1,""name"":""Alice""}]}";
+var ploon = await Ploon.FromJsonAsync(json);
+
+// With cancellation token
+using var cts = new CancellationTokenSource();
+var ploon = await Ploon.FromJsonAsync(json, cancellationToken: cts.Token);
+
+// With options
+var ploon = await Ploon.FromJsonAsync(json, new StringifyOptions { Format = PloonFormat.Compact });
 ```
 
 ---

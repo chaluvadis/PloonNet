@@ -40,7 +40,7 @@ internal class DataEncoder(PloonConfig config, SchemaNode schema)
     /// </summary>
     private void EncodeArray(JsonElement arrayElement, List<SchemaField> fields, int depth, List<string> records)
     {
-        int index = 1;
+        var index = 1;
         foreach (var item in arrayElement.EnumerateArray())
         {
             if (item.ValueKind == JsonValueKind.Object)
