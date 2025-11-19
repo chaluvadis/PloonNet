@@ -4,7 +4,8 @@
 
 PloonNet is a .NET implementation of PLOON (Path-Level Object Oriented Notation), a highly efficient serialization format designed to minimize token usage when transmitting data to Large Language Models (LLMs) and for general data interchange.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com)
 
 ---
 
